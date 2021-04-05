@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class TestAuth extends StatefulWidget {
@@ -26,12 +27,31 @@ class _TestAuthState extends State<TestAuth> {
     return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 
+  Future<UserCredential> signInWithFacebook() async {
+    final LoginResult result = await FacebookAuth.instance.login();
+    if (result.status == LoginStatus.success) {
+      // Create a credential from the access token
+      final OAuthCredential credential =
+          FacebookAuthProvider.credential(result.accessToken.token);
+      // Once signed in, return the UserCredential
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     signIn() {
       return Center(
-        child: ElevatedButton(
-            onPressed: signInWithGoogle, child: Text("Google sign-in")),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+                onPressed: signInWithGoogle, child: Text("Google sign-in")),
+            ElevatedButton(
+                onPressed: signInWithFacebook, child: Text("Facebook sign-in")),
+          ],
+        ),
       );
     }
 
