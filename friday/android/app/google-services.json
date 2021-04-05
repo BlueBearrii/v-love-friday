@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "307563937991-5hm5rtiqur06hanr0vk8lsmnm3hdm5sh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vr.love.friday",
+            "certificate_hash": "d8787ba43b32811afa98f3773ed3f72764078f5f"
+          }
+        },
+        {
           "client_id": "307563937991-l88ae1m4j3h4818de91tnnvj3m382j09.apps.googleusercontent.com",
           "client_type": 3
         }
