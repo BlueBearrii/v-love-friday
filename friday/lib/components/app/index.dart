@@ -10,7 +10,7 @@ class _IndexState extends State<Index> {
   static List<Widget> _widgetOptions = <Widget>[
     Center(
       child: Text(
-        'Index 0: Explorer',
+        'Index 0: Explore',
       ),
     ),
     Booking(),
@@ -35,7 +35,7 @@ class _IndexState extends State<Index> {
         bottomNavigationBar: BottomNavigationBar(
           items: [
             BottomNavigationBarItem(
-                icon: Icon(Icons.explore), label: "Explorer"),
+                icon: Icon(Icons.explore), label: "Explore"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.card_travel), label: "Booking"),
             BottomNavigationBarItem(
