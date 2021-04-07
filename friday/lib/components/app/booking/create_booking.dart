@@ -37,6 +37,9 @@ class _BookingState extends State<CreateBooking> {
     }
   }
 
+  final String kohLan =
+      "https://www.renown-travel.com/images/coral-island-l.jpg";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,10 +50,40 @@ class _BookingState extends State<CreateBooking> {
       body: Container(
         child: Column(
           children: [
-            Container(
-              height: customSize.getHeight(30, context),
-              color: Colors.blueAccent,
-            ),
+            Stack(children: [
+              Container(
+                height: customSize.getHeight(30, context),
+                decoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  image: DecorationImage(
+                    image: NetworkImage(kohLan),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              Positioned(
+                right: 5,
+                bottom: 5,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(primary: Colors.white),
+                  onPressed: () {
+                    print("Clicky !!");
+                  },
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.edit,
+                        color: Colors.grey,
+                      ),
+                      Text(
+                        "Edit",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ]),
             Container(
               padding: EdgeInsets.symmetric(
                 horizontal: customSize.getWidth(5, context),
@@ -103,11 +136,24 @@ class _BookingState extends State<CreateBooking> {
                   Container(
                     margin: EdgeInsets.symmetric(vertical: 10),
                     child: Form(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.edit),
-                            hintText: "Please enter trip name"),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.edit),
+                                hintText: "Please enter trip name"),
+                          ),
+                          Container(
+                            margin: EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          TextFormField(
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.money_off),
+                                hintText: "Your budget"),
+                          ),
+                        ],
                       ),
                     ),
                   ),
