@@ -44,8 +44,17 @@ class _BookingState extends State<CreateBooking> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent,
-        title: Text("Create new trip"),
+        iconTheme: IconThemeData(
+          color: Colors.black87, //change your color here
+        ),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        title: Text(
+          "Create new trip",
+          style: TextStyle(
+            color: Colors.black87,
+          ),
+        ),
       ),
       body: Container(
         child: Column(
