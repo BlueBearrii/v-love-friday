@@ -21,7 +21,13 @@ class _BookingState extends State<Booking> {
     setState(() {
       litems.add({
         "title": "index 1",
-        "day": ["Apr 2, 2021", "Apr 3, 2021"],
+        "day": [
+          "Apr 2, 2021",
+          "Apr 3, 2021",
+          "Apr 4, 2021",
+          "Apr 5, 2021",
+          "Apr 6, 2021"
+        ],
         "booking_id": "23213829",
         "check-in": DateFormat.yMMMd().format(DateTime.now()),
         "check-out":
@@ -29,26 +35,6 @@ class _BookingState extends State<Booking> {
         "location": "Bangkok",
         "image":
             "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png"
-      });
-      litems.add({
-        "title": "index 2",
-        "booking_id": "28104820",
-        "check-in": DateFormat.yMMMd().format(DateTime.now()),
-        "check-out":
-            DateFormat.yMMMd().format(DateTime.now().add(Duration(days: 2))),
-        "location": "Phuket",
-        "image":
-            "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg"
-      });
-      litems.add({
-        "title": "index 3",
-        "booking_id": "69280468",
-        "check-in": DateFormat.yMMMd().format(DateTime.now()),
-        "check-out":
-            DateFormat.yMMMd().format(DateTime.now().add(Duration(days: 2))),
-        "location": "Rayong",
-        "image":
-            "https://colossalvacation.com/wp-content/uploads/2019/09/rayong.jpg"
       });
     });
   }
@@ -126,9 +112,19 @@ class _BookingState extends State<Booking> {
                               onPressed: () {
                                 Navigator.pushNamed(context, "/create_booking");
                               },
-                              child: Icon(
-                                Icons.add,
-                                color: Colors.black,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.add,
+                                    color: Colors.black,
+                                    size: 18,
+                                  ),
+                                  Text(
+                                    "Create new booking",
+                                    style: TextStyle(color: Colors.black),
+                                  )
+                                ],
                               ),
                             ),
                           );
@@ -229,7 +225,7 @@ class _BookingState extends State<Booking> {
                                             Row(
                                               children: [
                                                 Text(
-                                                  "Booking id : ${litems[index]["booking_id"]}",
+                                                  "Trip id : ${litems[index]["booking_id"]}",
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     color: Colors.grey,

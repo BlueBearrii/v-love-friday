@@ -56,135 +56,137 @@ class _BookingState extends State<CreateBooking> {
           ),
         ),
       ),
-      body: Container(
-        child: Column(
-          children: [
-            Stack(children: [
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: [
+              Stack(children: [
+                Container(
+                  height: customSize.getHeight(30, context),
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    image: DecorationImage(
+                      image: NetworkImage(kohLan),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  right: 5,
+                  bottom: 5,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.white),
+                    onPressed: () {
+                      print("Clicky !!");
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.edit,
+                          color: Colors.grey,
+                        ),
+                        Text(
+                          "Edit",
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ]),
               Container(
-                height: customSize.getHeight(30, context),
-                decoration: BoxDecoration(
-                  color: Colors.blueAccent,
-                  image: DecorationImage(
-                    image: NetworkImage(kohLan),
-                    fit: BoxFit.cover,
-                  ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: customSize.getWidth(5, context),
                 ),
-              ),
-              Positioned(
-                right: 5,
-                bottom: 5,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(primary: Colors.white),
-                  onPressed: () {
-                    print("Clicky !!");
-                  },
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.edit,
-                        color: Colors.grey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(top: 10),
+                      child: Text(
+                        "Select booking date",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
                       ),
-                      Text(
-                        "Edit",
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ]),
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: customSize.getWidth(5, context),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.only(top: 10),
-                    child: Text(
-                      "Select booking date",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                     ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Text("Start", style: TextStyle(fontSize: 16)),
-                            TextButton(
-                              onPressed: () {
-                                _selectDate(context, selectedStartDate, 0);
-                              },
-                              child: Text(
-                                DateFormat.yMMMd().format(selectedStartDate),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Text("Start", style: TextStyle(fontSize: 16)),
+                              TextButton(
+                                onPressed: () {
+                                  _selectDate(context, selectedStartDate, 0);
+                                },
+                                child: Text(
+                                  DateFormat.yMMMd().format(selectedStartDate),
+                                ),
                               ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Text("End", style: TextStyle(fontSize: 16)),
+                              TextButton(
+                                onPressed: () {
+                                  _selectDate(context, selectedEndDate, 1);
+                                },
+                                child: Text(
+                                  DateFormat.yMMMd().format(selectedEndDate),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      child: Form(
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.edit),
+                                  hintText: "Please enter trip name"),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(vertical: 10),
+                            ),
+                            TextFormField(
+                              decoration: InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  prefixIcon: Icon(Icons.money_off),
+                                  hintText: "Your budget"),
                             ),
                           ],
                         ),
                       ),
-                      Expanded(
-                        child: Row(
-                          children: [
-                            Text("End", style: TextStyle(fontSize: 16)),
-                            TextButton(
-                              onPressed: () {
-                                _selectDate(context, selectedEndDate, 1);
-                              },
-                              child: Text(
-                                DateFormat.yMMMd().format(selectedEndDate),
-                              ),
-                            ),
-                          ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 15, bottom: 30),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.blueAccent),
+                          padding: MaterialStateProperty.all(
+                            EdgeInsets.symmetric(vertical: 15),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child: Form(
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.edit),
-                                hintText: "Please enter trip name"),
-                          ),
-                          Container(
-                            margin: EdgeInsets.symmetric(vertical: 10),
-                          ),
-                          TextFormField(
-                            decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                prefixIcon: Icon(Icons.money_off),
-                                hintText: "Your budget"),
-                          ),
-                        ],
+                        onPressed: () {},
+                        child: Text("Create plan"),
                       ),
                     ),
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(top: 15),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.blueAccent),
-                        padding: MaterialStateProperty.all(
-                          EdgeInsets.symmetric(vertical: 15),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Text("Create plan"),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
