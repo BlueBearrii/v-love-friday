@@ -37,18 +37,84 @@ app.post("/api/create-trip", (req, res) => {
           });
         })
         .catch((updateErr) => {
-          return res
-            .status(500)
-            .json({
-              message: "Something wrong can not update trip id",
-              updateErr,
-            });
+          return res.status(500).json({
+            message: "Something wrong can not update trip id",
+            updateErr,
+          });
         });
     })
     .catch((err) => {
       return res
         .status(500)
         .json({ message: "Something wrong can not create new trip", err });
+    });
+});
+
+app.post("/api/booking", (req, res) => {
+  const body = {
+    tripId: req.body.tripId,
+    uid: req.body.uid,
+    date: req.body.date,
+    time: req.body.time,
+    placeId: req.body.placeId,
+    type: req.body.type,
+    status: "pending",
+  };
+
+  console.log(body);
+
+  const docRef = db.collection("bookings").add(body);
+  docRef
+    .then((serverResponse) => {
+      return res.status(201).json({
+        message: "Booking successfull",
+        serverResponse,
+      });
+    })
+    .catch((err) => {
+      return res
+        .status(500)
+        .json({ message: "Something wrong, booking not success", err });
+    });
+});
+
+app.post("/api/hosting/register", (req, res) => {
+  const body = {
+    uid: req.body.uid,
+    placeId: null,
+    title: req.body.title,
+    location: req.body.location,
+    type: req.body.type,
+    rule: req.body.rule,
+    pricing: req.body.pricing,
+    review: null,
+    rate : null,
+  };
+  console.log(body);
+
+  const docRef = db.collection("hosting").add(body);
+  docRef
+    .then((serverResponse) => {
+      serverResponse
+        .update({ placeId: serverResponse.id })
+        .then((updateResponse) => {
+          return res.status(201).json({
+            message: "Hosting successfull",
+            serverResponse,
+            updateResponse,
+          });
+        })
+        .catch((updateErr) => {
+          return res.status(500).json({
+            message: "Something wrong can not update host id",
+            updateErr,
+          });
+        });
+    })
+    .catch((err) => {
+      return res
+        .status(500)
+        .json({ message: "Something wrong, hosting not success", err });
     });
 });
 
