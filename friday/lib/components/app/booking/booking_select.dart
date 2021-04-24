@@ -60,33 +60,27 @@ class _BookingSelectState extends State<BookingSelect> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: [
-                  SizedBox(
-                    width: double.infinity,
-                    height: 200,
-                    child: Card(
-                        color: Colors.white,
-                        child: Stack(
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              height: double.infinity,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child: Image.network(
-                                  widget.data["image"],
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            )
-                          ],
-                        )),
-                  )
-                ],
-              ),
+            Column(
+              children: [
+                SizedBox(
+                  width: double.infinity,
+                  height: 250,
+                  child: Card(
+                      color: Colors.white,
+                      child: Stack(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            height: double.infinity,
+                            child: Image.network(
+                              widget.data["image"],
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        ],
+                      )),
+                )
+              ],
             ),
             Padding(
               padding: const EdgeInsets.all(10.0),

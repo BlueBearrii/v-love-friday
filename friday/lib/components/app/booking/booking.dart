@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:friday/common/api.dart';
 import 'package:friday/common/custom_size.dart';
 import 'package:friday/components/app/booking/booking_select.dart';
 import 'package:intl/intl.dart';
@@ -11,33 +13,16 @@ class Booking extends StatefulWidget {
 
 class _BookingState extends State<Booking> {
   final customSize = new CustomSize();
+  final apiPath = new API();
+  final dio = Dio();
+
   final List litems = [
     "button title",
     "add",
     "list title",
   ];
 
-  getListItems() {
-    setState(() {
-      litems.add({
-        "title": "index 1",
-        "day": [
-          "Apr 2, 2021",
-          "Apr 3, 2021",
-          "Apr 4, 2021",
-          "Apr 5, 2021",
-          "Apr 6, 2021"
-        ],
-        "booking_id": "23213829",
-        "check-in": DateFormat.yMMMd().format(DateTime.now()),
-        "check-out":
-            DateFormat.yMMMd().format(DateTime.now().add(Duration(days: 2))),
-        "location": "Bangkok",
-        "image":
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/1200px-Image_created_with_a_mobile_phone.png"
-      });
-    });
-  }
+  getListItems() {}
 
   @override
   void initState() {

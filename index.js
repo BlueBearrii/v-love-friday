@@ -11,6 +11,23 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
+app.post("/api/get-trips", (req, res) => {
+  const docRef = db.collection("trips");
+  docRef
+    .where("uid", "==", req.headers.uid)
+    .get()
+    .then((snapshot) => {
+      var arr = [];
+      snapshot.forEach((doc) => {
+        arr.push(doc.data());
+      });
+
+      return res.status(200).json(arr);
+    }).catch(err => {
+      return res.status(500).json(err);
+    })
+});
+
 app.post("/api/create-trip", (req, res) => {
   const body = {
     uid: req.body.uid,
@@ -88,7 +105,7 @@ app.post("/api/hosting/register", (req, res) => {
     rule: req.body.rule,
     pricing: req.body.pricing,
     review: null,
-    rate : null,
+    rate: null,
   };
   console.log(body);
 

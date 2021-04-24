@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:friday/common/api.dart';
 import 'package:friday/common/custom_size.dart';
 import 'package:intl/intl.dart';
 
@@ -9,9 +14,39 @@ class CreateBooking extends StatefulWidget {
 
 class _BookingState extends State<CreateBooking> {
   final customSize = new CustomSize();
+  final apiPath = new API();
+  final dio = Dio();
+
+  final String kohLan =
+      "https://www.renown-travel.com/images/coral-island-l.jpg";
 
   DateTime selectedStartDate = DateTime.now();
   DateTime selectedEndDate = DateTime.now().add(Duration(days: 1));
+
+  String tripName;
+  double budget;
+
+  bool _loading = false;
+
+  createTrip() async {
+    var body = {
+      "uid": FirebaseAuth.instance.currentUser.uid,
+      "name": tripName,
+      "budget": budget,
+      "wallpaper": kohLan,
+      "date": [
+        DateFormat.yMMMd().format(selectedStartDate),
+        DateFormat.yMMMd().format(selectedEndDate)
+      ],
+    };
+
+    await dio.post(apiPath.createTrip, data: json.encode(body)).then((value) {
+      print(value.data);
+      setState(() {
+        _loading = false;
+      });
+    });
+  }
 
   _selectDate(BuildContext context, _initialDate, day) async {
     final DateTime picked = await showDatePicker(
@@ -36,9 +71,6 @@ class _BookingState extends State<CreateBooking> {
         });
     }
   }
-
-  final String kohLan =
-      "https://www.renown-travel.com/images/coral-island-l.jpg";
 
   @override
   Widget build(BuildContext context) {
@@ -149,6 +181,11 @@ class _BookingState extends State<CreateBooking> {
                         child: Column(
                           children: [
                             TextFormField(
+                              onChanged: (value) {
+                                setState(() {
+                                  tripName = value;
+                                });
+                              },
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   prefixIcon: Icon(Icons.edit),
@@ -158,6 +195,12 @@ class _BookingState extends State<CreateBooking> {
                               margin: EdgeInsets.symmetric(vertical: 10),
                             ),
                             TextFormField(
+                              keyboardType: TextInputType.number,
+                              onChanged: (value) {
+                                setState(() {
+                                  budget = double.parse(value);
+                                });
+                              },
                               decoration: InputDecoration(
                                   border: OutlineInputBorder(),
                                   prefixIcon: Icon(Icons.money_off),
@@ -170,17 +213,26 @@ class _BookingState extends State<CreateBooking> {
                     Container(
                       margin: EdgeInsets.only(top: 15, bottom: 30),
                       width: double.infinity,
-                      child: ElevatedButton(
-                        style: ButtonStyle(
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.blueAccent),
-                          padding: MaterialStateProperty.all(
-                            EdgeInsets.symmetric(vertical: 15),
-                          ),
-                        ),
-                        onPressed: () {},
-                        child: Text("Create plan"),
-                      ),
+                      child: _loading
+                          ? Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.blueAccent),
+                                padding: MaterialStateProperty.all(
+                                  EdgeInsets.symmetric(vertical: 15),
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _loading = true;
+                                });
+                                createTrip();
+                              },
+                              child: Text("Create plan"),
+                            ),
                     ),
                   ],
                 ),
