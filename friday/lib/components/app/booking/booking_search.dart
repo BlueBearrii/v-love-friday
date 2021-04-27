@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:friday/common/custom_size.dart';
-import 'package:friday/components/app/booking/booking_place.dart';
+import 'package:friday/utils/custom_size.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
+
+import 'booking_place.dart';
 
 class BookingSearch extends StatefulWidget {
   @override

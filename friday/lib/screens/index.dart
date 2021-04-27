@@ -1,8 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:friday/components/app/booking/booking.dart';
-import 'package:friday/components/app/setting/setting.dart';
-import 'package:friday/main.dart';
 
 class Index extends StatefulWidget {
   @override
@@ -16,8 +12,16 @@ class _IndexState extends State<Index> {
         'Index 0: Explore',
       ),
     ),
-    Booking(),
-    Setting()
+    Center(
+      child: Text(
+        'Index 1: Booking',
+      ),
+    ),
+    Center(
+      child: Text(
+        'Index 2: Setting',
+      ),
+    ),
   ];
 
   int _selectedIndex = 0;
@@ -36,7 +40,7 @@ class _IndexState extends State<Index> {
             BottomNavigationBarItem(
                 icon: Icon(Icons.explore), label: "Explore"),
             BottomNavigationBarItem(
-                icon: Icon(Icons.card_travel), label: "Booking"),
+                icon: Icon(Icons.card_travel), label: "Trips"),
             BottomNavigationBarItem(
                 icon: Icon(Icons.settings), label: "Setting"),
           ],
