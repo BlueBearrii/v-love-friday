@@ -1,10 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:friday/common/api.dart';
-import 'package:friday/common/custom_size.dart';
-import 'package:friday/components/app/booking/booking_select.dart';
-import 'package:intl/intl.dart';
+import 'package:friday/constants/api.dart';
+import 'package:friday/utils/custom_size.dart';
+
+import 'booking_select.dart';
 
 class Booking extends StatefulWidget {
   @override
@@ -15,19 +16,12 @@ class _BookingState extends State<Booking> {
   final customSize = new CustomSize();
   final apiPath = new API();
   final dio = Dio();
-
-  final List litems = [
-    "button title",
-    "add",
-    "list title",
-  ];
-
-  getListItems() {}
+  FirebaseAuth auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
-    getListItems();
   }
 
   @override
@@ -35,7 +29,7 @@ class _BookingState extends State<Booking> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Booking",
+          "Trips",
           style: TextStyle(color: Colors.black87),
         ),
         backgroundColor: Colors.white,
@@ -43,7 +37,7 @@ class _BookingState extends State<Booking> {
       ),
       backgroundColor: Colors.white54,
       body: StreamBuilder<Object>(
-          stream: FirebaseAuth.instance.authStateChanges(),
+          stream: auth.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.active) {
               if (snapshot.data == null) {
@@ -53,7 +47,7 @@ class _BookingState extends State<Booking> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text("Please sign-in to booking"),
-                        OutlineButton(
+                        TextButton(
                           onPressed: () {
                             Navigator.pushNamed(context, '/sign_in');
                           },
@@ -64,242 +58,143 @@ class _BookingState extends State<Booking> {
                   ),
                 );
               } else {
-                return Container(
-                  child: ListView.builder(
-                      itemCount: litems.length,
-                      itemBuilder: (context, index) {
-                        if (litems[index] == "button title") {
-                          return Container(
-                            width: customSize.getWidth(100, context),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 10),
-                            child: Row(children: [
-                              Text(
-                                "New booking",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey[700],
+                String uid = FirebaseAuth.instance.currentUser.uid;
+                return StreamBuilder(
+                    stream: firestore
+                        .collection("trips")
+                        .where('uid', isEqualTo: uid)
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      return ListView(
+                        shrinkWrap: true,
+                        children:
+                            snapshot.data.docs.map((DocumentSnapshot document) {
+                          print(document.data());
+                          var rating = (document.data()["rating"][0] +
+                                  (document.data()["rating"][1] * 2) +
+                                  (document.data()["rating"][2] * 3) +
+                                  (document.data()["rating"][3] * 4) +
+                                  (document.data()["rating"][4] * 5)) /
+                              (document.data()["rating"][0] +
+                                  document.data()["rating"][1] +
+                                  document.data()["rating"][2] +
+                                  document.data()["rating"][3] +
+                                  document.data()["rating"][4]);
+
+                          var voted_count = (document.data()["rating"][0] +
+                              document.data()["rating"][1] +
+                              document.data()["rating"][2] +
+                              document.data()["rating"][3] +
+                              document.data()["rating"][4]);
+
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      BookingSelect(data: document.data()),
                                 ),
-                              ),
-                            ]),
-                          );
-                        } else if (litems[index] == "add") {
-                          return Container(
-                            width: customSize.getWidth(100, context),
-                            height: customSize.getHeight(8, context),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 10),
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.white)),
-                              onPressed: () {
-                                Navigator.pushNamed(context, "/create_booking");
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.add,
-                                    color: Colors.black,
-                                    size: 18,
-                                  ),
-                                  Text(
-                                    "Create new booking",
-                                    style: TextStyle(color: Colors.black),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        } else if (litems[index] == "list title") {
-                          return Container(
-                            width: customSize.getWidth(100, context),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 10),
-                            child: Row(children: [
-                              Text(
-                                "History",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                            ]),
-                          );
-                        } else {
-                          return Container(
-                            width: customSize.getWidth(100, context),
-                            height: customSize.getHeight(20, context),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 10),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        BookingSelect(data: litems[index]),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(5),
-                                    border: Border.all(
-                                        width: 0.0, color: Colors.grey),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.5),
-                                        spreadRadius: 1,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 0),
-                                      )
-                                    ]),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      child: AspectRatio(
-                                        aspectRatio: 1 / 1,
-                                        child: Image.network(
-                                          litems[index]["image"],
-                                          fit: BoxFit.cover,
-                                          loadingBuilder: (context, child,
-                                              loadingProgress) {
-                                            if (loadingProgress == null)
-                                              return child;
-                                            return Center(
-                                              child: CircularProgressIndicator(
-                                                value: loadingProgress
-                                                            .expectedTotalBytes !=
-                                                        null
-                                                    ? loadingProgress
-                                                            .cumulativeBytesLoaded /
-                                                        loadingProgress
-                                                            .expectedTotalBytes
-                                                    : null,
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
+                              );
+                            },
+                            child: SizedBox(
+                              height: 350,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 4.0),
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        5.0), // if you need this
+                                    side: BorderSide(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      width: 1,
                                     ),
-                                    Expanded(
-                                      child: Container(
-                                        padding: EdgeInsets.all(10),
+                                  ),
+                                  elevation: 1.2,
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Image.network(
+                                            document.data()['url'],
+                                            height: 200,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover, loadingBuilder:
+                                                (context, child,
+                                                    loadingProgress) {
+                                          if (loadingProgress == null)
+                                            return child;
+                                          return Center(
+                                            child: CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes
+                                                  : null,
+                                            ),
+                                          );
+                                        }),
+                                      ),
+                                      Expanded(
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 10),
-                                              child: Text(
-                                                litems[index]["title"],
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 18,
-                                                ),
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  "Trip id : ${litems[index]["booking_id"]}",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.grey,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.symmetric(
-                                                  vertical: 5),
-                                              child: Wrap(
-                                                alignment: WrapAlignment.start,
-                                                crossAxisAlignment:
-                                                    WrapCrossAlignment.center,
-                                                children: [
-                                                  Text(litems[index]["check-in"]
-                                                      .toString()),
-                                                  Container(
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 5),
-                                                    child: Icon(
-                                                      Icons.arrow_right_alt,
-                                                      color: Colors.blueAccent,
+                                            Expanded(
+                                              child: ListTile(
+                                                title: Text(
+                                                    document.data()['name']),
+                                                subtitle: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("งบประมาณ " +
+                                                        document
+                                                            .data()['budget']
+                                                            .toString() +
+                                                        " บาท"),
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                            "เริ่มต้น : วันที่ " +
+                                                                document.data()[
+                                                                    'date'][0] +
+                                                                " ถึง " +
+                                                                document.data()[
+                                                                    'date'][1]),
+                                                      ],
                                                     ),
-                                                  ),
-                                                  Text(litems[index]
-                                                          ["check-out"]
-                                                      .toString()),
-                                                ],
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                            "คะแนน : ${rating.toStringAsFixed(1)} ($voted_count)"),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.location_pin,
-                                                  color: Colors.grey,
-                                                ),
-                                                Text(
-                                                  litems[index]["location"],
-                                                  style: TextStyle(
-                                                      color: Colors.grey),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(
-                                              margin: EdgeInsets.only(top: 10),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.money_off,
-                                                    color: Colors.grey,
-                                                    size: 16,
-                                                  ),
-                                                  Text(
-                                                    "1000",
-                                                    style: TextStyle(
-                                                        color: Colors.grey),
-                                                  ),
-                                                  Container(
-                                                    margin:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 2),
-                                                  ),
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.yellow[500],
-                                                    size: 16,
-                                                  ),
-                                                  Text(
-                                                    "5.0",
-                                                    style: TextStyle(
-                                                        color: Colors.grey),
-                                                  ),
-                                                ],
-                                              ),
-                                            )
                                           ],
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
                           );
-                        }
-                      }),
-                );
+                        }).toList(),
+                      );
+                    });
               }
             }
             return Center(child: CircularProgressIndicator());

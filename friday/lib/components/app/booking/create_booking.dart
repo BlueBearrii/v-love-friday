@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
-import 'package:friday/common/api.dart';
-import 'package:friday/common/custom_size.dart';
+import 'package:friday/constants/api.dart';
+import 'package:friday/utils/custom_size.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class CreateBooking extends StatefulWidget {
@@ -28,24 +31,51 @@ class _BookingState extends State<CreateBooking> {
 
   bool _loading = false;
 
-  createTrip() async {
-    var body = {
-      "uid": FirebaseAuth.instance.currentUser.uid,
-      "name": tripName,
-      "budget": budget,
-      "wallpaper": kohLan,
-      "date": [
-        DateFormat.yMMMd().format(selectedStartDate),
-        DateFormat.yMMMd().format(selectedEndDate)
-      ],
-    };
+  File _image;
+  final picker = ImagePicker();
 
-    await dio.post(apiPath.createTrip, data: json.encode(body)).then((value) {
-      print(value.data);
-      setState(() {
-        _loading = false;
-      });
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
     });
+  }
+
+  createTrip() async {
+    firebase_storage.FirebaseStorage storage =
+        firebase_storage.FirebaseStorage.instance;
+    await storage
+        .ref("wallpaper/${FirebaseAuth.instance.currentUser.uid}/$tripName")
+        .putFile(_image)
+        .then((value) async {
+      await value.ref.getDownloadURL().then((path) async {
+        await dio
+            .post(apiPath.createTrip,
+                data: json.encode({
+                  "uid": FirebaseAuth.instance.currentUser.uid,
+                  "name": tripName,
+                  "budget": budget,
+                  "wallpaper": path,
+                  "date": [
+                    DateFormat.yMMMd().format(selectedStartDate),
+                    DateFormat.yMMMd().format(selectedEndDate)
+                  ],
+                }))
+            .then((value) {
+          print(value.data);
+          setState(() {
+            _loading = false;
+          });
+        }).then((value) {
+          Navigator.pop(context);
+        }).catchError((onError) => {print(onError)});
+      });
+    }).catchError((onError) => {print(onError)});
   }
 
   _selectDate(BuildContext context, _initialDate, day) async {
@@ -98,7 +128,9 @@ class _BookingState extends State<CreateBooking> {
                   decoration: BoxDecoration(
                     color: Colors.blueAccent,
                     image: DecorationImage(
-                      image: NetworkImage(kohLan),
+                      image: _image != null
+                          ? FileImage(_image)
+                          : NetworkImage(kohLan),
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -108,9 +140,7 @@ class _BookingState extends State<CreateBooking> {
                   bottom: 5,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(primary: Colors.white),
-                    onPressed: () {
-                      print("Clicky !!");
-                    },
+                    onPressed: getImage,
                     child: Row(
                       children: [
                         Icon(

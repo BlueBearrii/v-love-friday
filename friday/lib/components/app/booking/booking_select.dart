@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:friday/common/custom_size.dart';
-import 'package:friday/components/app/booking/booking.dart';
-import 'package:friday/components/app/booking/booking_search.dart';
+import 'package:friday/utils/custom_size.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'booking_search.dart';
 
 class BookingSelect extends StatefulWidget {
   final Map data;
@@ -36,12 +36,29 @@ class _BookingSelectState extends State<BookingSelect> {
   @override
   Widget build(BuildContext context) {
     print("INDEX : ${widget.data}");
+    var rating = (widget.data["rating"][0] +
+            (widget.data["rating"][1] * 2) +
+            (widget.data["rating"][2] * 3) +
+            (widget.data["rating"][3] * 4) +
+            (widget.data["rating"][4] * 5)) /
+        (widget.data["rating"][0] +
+            widget.data["rating"][1] +
+            widget.data["rating"][2] +
+            widget.data["rating"][3] +
+            widget.data["rating"][4]);
+
+    var voted_count = (widget.data["rating"][0] +
+        widget.data["rating"][1] +
+        widget.data["rating"][2] +
+        widget.data["rating"][3] +
+        widget.data["rating"][4]);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         leading: BackButton(color: Colors.black),
         title: Text(
-          widget.data["title"],
+          widget.data["name"],
           style: TextStyle(color: Colors.black),
         ),
       ),
@@ -73,7 +90,7 @@ class _BookingSelectState extends State<BookingSelect> {
                             width: double.infinity,
                             height: double.infinity,
                             child: Image.network(
-                              widget.data["image"],
+                              widget.data["url"],
                               fit: BoxFit.cover,
                             ),
                           )
@@ -89,7 +106,7 @@ class _BookingSelectState extends State<BookingSelect> {
                   Row(
                     children: [
                       Text(
-                        "${widget.data["title"]}",
+                        "${widget.data["name"]}",
                         style: TextStyle(
                             fontWeight: FontWeight.w500, fontSize: 20),
                       ),
@@ -100,15 +117,19 @@ class _BookingSelectState extends State<BookingSelect> {
                       Expanded(
                         child: Row(
                           children: [
+                            Text(
+                              "Trip id",
+                              style: TextStyle(fontWeight: FontWeight.w500),
+                            ),
+                            Container(
+                              margin: EdgeInsets.symmetric(horizontal: 10),
+                            ),
                             Expanded(
                               child: Text(
-                                "Trip id",
+                                "${widget.data["tripId"]}",
+                                overflow: TextOverflow.clip,
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               ),
-                            ),
-                            Text(
-                              "${widget.data["booking_id"]}",
-                              style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ],
                         ),
@@ -124,7 +145,7 @@ class _BookingSelectState extends State<BookingSelect> {
                               ),
                             ),
                             Text(
-                              "${widget.data["day"].length} day",
+                              "${widget.data["date"].length} day",
                               style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ],
@@ -144,7 +165,7 @@ class _BookingSelectState extends State<BookingSelect> {
                               ),
                             ),
                             Text(
-                              "1000",
+                              widget.data["budget"].toString(),
                               style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                           ],
@@ -161,7 +182,7 @@ class _BookingSelectState extends State<BookingSelect> {
                               ),
                             ),
                             Text(
-                              "5.0",
+                              "${rating.toStringAsFixed(1)} ($voted_count)",
                               style: TextStyle(fontWeight: FontWeight.w500),
                             ),
                             Icon(
@@ -202,7 +223,9 @@ class _BookingSelectState extends State<BookingSelect> {
                   ),
                   Expanded(
                     child: Text(
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                      widget.data["storyTelling"] != null
+                          ? widget.data["storyTelling"]
+                          : "คุณยังไม่ได้บอกเล่าความรู้สึกแก่เราและคนอื่น",
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                   ),
@@ -264,7 +287,7 @@ class _BookingSelectState extends State<BookingSelect> {
             ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: widget.data['day'].length,
+                itemCount: widget.data['date'].length,
                 itemBuilder: (context, index) {
                   return Container(
                     padding: EdgeInsets.symmetric(horizontal: 10),
@@ -279,7 +302,7 @@ class _BookingSelectState extends State<BookingSelect> {
                                 color: Colors.grey,
                               ),
                               Text(
-                                "${widget.data['day'][index]}",
+                                "${widget.data['date'][index]}",
                                 style: TextStyle(fontWeight: FontWeight.w500),
                               ),
                               Expanded(
@@ -350,7 +373,7 @@ class _BookingSelectState extends State<BookingSelect> {
                                                 child: AspectRatio(
                                                   aspectRatio: 1 / 1,
                                                   child: Image.network(
-                                                    widget.data["image"],
+                                                    widget.data["url"],
                                                     fit: BoxFit.cover,
                                                   ),
                                                 ),
