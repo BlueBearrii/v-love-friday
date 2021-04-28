@@ -12,6 +12,8 @@ exports.createTrip = async (req, res) => {
   const {title, budget, tripId, uid} = req.body
   const filename = `${tripId}_${uid}`
   const url = `https://firebasestorage.googleapis.com/v0/b/${storage.name}/o/${filename}?alt=media`;
+
+  
   try {
     const _file = await storage.file(filename);
 
