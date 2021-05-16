@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:friday/screens/trips/trips.dart';
-import 'package:friday/utils/auth/routeToSignInScreen.dart';
+import 'package:friday/utils/auth/route_to_sign_in_screen.dart';
 
 class Index extends StatefulWidget {
   @override

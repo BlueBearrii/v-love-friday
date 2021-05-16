@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:friday/screens/auth/guest_information.dart';
 import 'package:friday/utils/popup/popup.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -19,7 +20,9 @@ class _SignInState extends State<SignIn> {
             pageBuilder: (BuildContext context, _, __) =>
                 PopUp(message: "confirm ?")));
 
-    print(result);
+    if (result)
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => GuestInformation()));
   }
 
   Future<UserCredential> signInWithGoogle() async {
@@ -63,7 +66,6 @@ class _SignInState extends State<SignIn> {
               TextButton(
                 onPressed: () {
                   signInWithAnonymously();
-                  print("Sign in clicked!!");
                 },
                 child: Text("Guest Login"),
               ),

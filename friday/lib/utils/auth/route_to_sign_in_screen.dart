@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:friday/screens/auth/signIn.dart';
+import 'package:friday/screens/auth/sign_in.dart';
 import 'package:friday/screens/trips/Trips.dart';
 
 class RouteToSignInScreen extends StatelessWidget {
