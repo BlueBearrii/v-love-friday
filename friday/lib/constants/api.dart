@@ -1,4 +1,4 @@
 class API {
-  String createTrip = "https://vr-love-friday.herokuapp.com/api/create-trip/";
-  String fetchTrips = "https://vr-love-friday.herokuapp.com/api/get-trips/";
+  static String api = "https://vr-love-friday.herokuapp.com/api/";
+  static String createTrip = "$api/trip/createTrip";
 }

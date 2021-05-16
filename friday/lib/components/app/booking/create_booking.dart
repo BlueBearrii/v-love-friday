@@ -55,7 +55,7 @@ class _BookingState extends State<CreateBooking> {
         .then((value) async {
       await value.ref.getDownloadURL().then((path) async {
         await dio
-            .post(apiPath.createTrip,
+            .post(API.createTrip,
                 data: json.encode({
                   "uid": FirebaseAuth.instance.currentUser.uid,
                   "name": tripName,
