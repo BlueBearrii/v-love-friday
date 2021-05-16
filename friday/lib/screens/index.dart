@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:friday/screens/trips/trips.dart';
+import 'package:friday/utils/auth/routeToSignInScreen.dart';
 
 class Index extends StatefulWidget {
   @override
@@ -12,16 +15,8 @@ class _IndexState extends State<Index> {
         'Index 0: Explore',
       ),
     ),
-    Center(
-      child: Text(
-        'Index 1: Booking',
-      ),
-    ),
-    Center(
-      child: Text(
-        'Index 2: Setting',
-      ),
-    ),
+    RouteToSignInScreen(0),
+    RouteToSignInScreen(1)
   ];
 
   int _selectedIndex = 0;
