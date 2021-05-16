@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+import 'package:friday/utils/popup/popup.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class SignIn extends StatefulWidget {
@@ -10,7 +11,15 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   Future<UserCredential> signInWithAnonymously() async {
-    return await FirebaseAuth.instance.signInAnonymously();
+    //return await FirebaseAuth.instance.signInAnonymously();
+    final result = await Navigator.push(
+        context,
+        PageRouteBuilder(
+            opaque: false,
+            pageBuilder: (BuildContext context, _, __) =>
+                PopUp(message: "confirm ?")));
+
+    print(result);
   }
 
   Future<UserCredential> signInWithGoogle() async {
@@ -54,6 +63,7 @@ class _SignInState extends State<SignIn> {
               TextButton(
                 onPressed: () {
                   signInWithAnonymously();
+                  print("Sign in clicked!!");
                 },
                 child: Text("Guest Login"),
               ),
