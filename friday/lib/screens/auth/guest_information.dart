@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:friday/database/auth/guest_information.dart';
 import 'package:friday/utils/loading/call_loading.dart';
 import 'package:friday/utils/loading/loading.dart';
 import 'package:friday/utils/popup/popup.dart';
@@ -17,10 +18,26 @@ class _GuestInformationState extends State<GuestInformation> {
   static const pattern = r'^[0]{1}[6-9]{1}[0-9]{8}$';
   RegExp regExp = RegExp(pattern);
 
-  Future createInformation() {
-    //CallLoading.onLoading(context);
+  Future createInformation() async {
     var result = _formKey.currentState.validate();
-    print("result : $result");
+    print(
+        "firstname : $firstName, lastname : $lastName, phonenumber : $phoneNumber");
+
+    if (result) {
+      CallLoading.onLoading(context);
+      await Authentication.guestRegister(firstName, lastName, phoneNumber)
+          .then((value) {
+        Navigator.pushNamedAndRemoveUntil(
+            context, "/", (Route<dynamic> route) => false);
+        print(value);
+      }).catchError((onError) {
+        Navigator.pop(context);
+        PopUp(
+          message: "Something went wrong please try again",
+        );
+        print(onError);
+      });
+    }
   }
 
   @override
@@ -228,6 +245,22 @@ class _GuestInformationState extends State<GuestInformation> {
                                 createInformation();
                               },
                               child: Text("Next")),
+                        ),
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                        ),
+                        SizedBox(
+                          height: 40,
+                          width: 90,
+                          child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Color.fromRGBO(77, 77, 77, 1)),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("Cancle")),
                         ),
                       ],
                     )

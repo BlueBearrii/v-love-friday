@@ -10,13 +10,9 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index> {
   static List<Widget> _widgetOptions = <Widget>[
-    Center(
-      child: Text(
-        'Index 0: Explore',
-      ),
-    ),
     RouteToSignInScreen(0),
-    RouteToSignInScreen(1)
+    RouteToSignInScreen(1),
+    RouteToSignInScreen(2),
   ];
 
   int _selectedIndex = 0;
@@ -40,7 +36,7 @@ class _IndexState extends State<Index> {
                 icon: Icon(Icons.settings), label: "Setting"),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.blueAccent,
+          selectedItemColor: Colors.teal,
           onTap: _onItemTapped,
         ),
         body: _widgetOptions.elementAt(_selectedIndex));

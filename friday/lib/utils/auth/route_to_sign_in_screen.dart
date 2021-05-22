@@ -8,10 +8,15 @@ class RouteToSignInScreen extends StatelessWidget {
   final int _selectedIndex;
 
   static List<Widget> _widgetOptions = <Widget>[
-    Trips(),
     Center(
       child: Text(
         'Index 0: Explore',
+      ),
+    ),
+    Trips(),
+    Center(
+      child: Text(
+        'Index 2: Setting',
       ),
     ),
   ];
