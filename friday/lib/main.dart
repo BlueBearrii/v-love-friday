@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:friday/screens/hero/hero.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +18,7 @@ class App extends StatelessWidget {
       home: FutureBuilder(
         future: _initialization,
         builder: (context, snapshot) {
+          print(snapshot.data);
           // Check for errors
           if (snapshot.hasError) {
             return Scaffold(
@@ -26,15 +28,15 @@ class App extends StatelessWidget {
             );
           }
 
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
 
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return HeroScreen();
         },
       ),
     );
