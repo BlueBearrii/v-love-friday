@@ -1,8 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'screens/index.dart';
-
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(App());
@@ -29,7 +27,7 @@ class App extends StatelessWidget {
           }
 
           if (snapshot.connectionState == ConnectionState.done) {
-            return Index();
+            return Container();
           }
 
           return Scaffold(
