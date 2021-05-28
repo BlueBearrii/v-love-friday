@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:friday/screens/hero/hero.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,6 +12,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(fontFamily: 'Kanit'),
       initialRoute: '/',
       routes: {},
       home: FutureBuilder(
@@ -36,7 +36,7 @@ class App extends StatelessWidget {
             );
           }
 
-          return HeroScreen();
+          return Container();
         },
       ),
     );
