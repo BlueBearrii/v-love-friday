@@ -7,7 +7,6 @@ firebaseInitialize();
 app.use(express.json());
 app.use(express.urlencoded());
 
-
 app.use('/api/trip', require('./routes/api/trip'));
 
 
