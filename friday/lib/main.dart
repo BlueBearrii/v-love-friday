@@ -26,15 +26,15 @@ class App extends StatelessWidget {
             );
           }
 
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Container();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
           }
 
-          return Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
+          return Container();
         },
       ),
     );
