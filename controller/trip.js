@@ -27,6 +27,26 @@ exports.createTripRoom = async (req, res) => {
 }
 
 
+exports.fetchBooked = async (req, res) => {
+  const { uid, tripId } = req.body;
+  const _trip = {
+    uid: uid,
+    tripId: tripId,
+  }
+
+  try {
+    const fetching = await firestore.collection("booking").where("uid", "==", uid).where("tripId", "==", tripId).get()
+
+    console.log(fetching.docs)
+
+    res.status(200).json({ code: "trip/fetch_booked", message: fetching.docs })
+  } catch (error) {
+    res.status(400).json(error)
+  }
+
+}
+
+
 exports.updateBalance = async (req, res) => {
   const { uid, tripId, pay } = req.body;
 
