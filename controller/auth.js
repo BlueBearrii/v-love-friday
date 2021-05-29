@@ -28,9 +28,9 @@ exports.setUserInformation = async (req, res) => {
             uid : uid
         })
 
-        res.json(user)
+        res.status(201).json(user)
     } catch (error) {
-        res.json(error)
+        res.status(400).json(error)
     }
 }
 

@@ -9,6 +9,7 @@ app.use(express.urlencoded());
 
 app.use('/api/trip', require('./routes/api/trip'));
 app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/host', require('./routes/api/host'));
 
 
 const PORT = process.env.PORT || 5000;
