@@ -9,6 +9,7 @@ exports.verifiedUid = async (req, res, next) => {
     try {
         const verified = await auth.getUser(uid);
         //res.json({ code: "auth/user-found", message: verified });
+        verified;
         next()
 
     } catch (error) {
