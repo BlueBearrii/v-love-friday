@@ -13,6 +13,6 @@ exports.verifiedUid = async (req, res, next) => {
         next()
 
     } catch (error) {
-        res.json(error)
+        res.status(401).json(error)
     }
 }
