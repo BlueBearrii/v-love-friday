@@ -25,3 +25,18 @@ exports.createTripRoom = async (req, res) => {
   }
 
 }
+
+
+exports.updateBalance = async (req, res) => {
+  const { uid, tripId, pay } = req.body;
+
+  try {
+    const ref = await firestore.collection("trips").doc(tripId)
+
+    const update = await ref.update({ balance: admin.firestore.FieldValue.increment(pay * (-1)) })
+
+    res.status(200).json({ code: "trip/balance_updated", message: update })
+  } catch (error) {
+    res.status(403).json(error)
+  }
+}
