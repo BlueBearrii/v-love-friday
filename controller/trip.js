@@ -1,5 +1,6 @@
 const express = require("express");
 const admin = require("firebase-admin");
+const liked = require("../utils/liked");
 
 const firestore = admin.firestore();
 
@@ -11,7 +12,8 @@ exports.createTripRoom = async (req, res) => {
     budget: budget,
     balance: budget,
     days: days,
-    place: place
+    place: place,
+    likes: []
   }
 
   try {
@@ -58,5 +60,35 @@ exports.updateBalance = async (req, res) => {
     res.status(200).json({ code: "trip/balance_updated", message: update })
   } catch (error) {
     res.status(403).json(error)
+  }
+}
+
+
+exports.commenting = async (req, res) => {
+  const { uid, tripId, comments, username, userImg } = req.body;
+
+  try {
+    const ref = await firestore.collection("comments");
+
+    const set = await ref.add({ tripId: tripId, username: username, userImg: userImg, comments: comments })
+
+    res.status(201).json({ code: "trip/comment", message: set })
+  } catch (error) {
+    res.status(403).json(error)
+  }
+}
+
+
+exports.likeTrip = async (req, res) => {
+  const { tripId, uid } = req.body;
+  const _collection = "trips"
+  try {
+
+      const like = await liked(_collection, tripId, uid);
+
+      res.status(201).json({ code: "trip/liked", message: like })
+
+  } catch (error) {
+      res.status(400).json(error)
   }
 }
