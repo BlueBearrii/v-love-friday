@@ -5,12 +5,13 @@ const liked = require("../utils/liked");
 const firestore = admin.firestore();
 
 exports.createHost = async (req, res) => {
-    const { lifstyle, hostname, address, contact, uid } = req.body;
+    const { lifstyle, hostname, address, contact, uid, keywords } = req.body;
     const host = {
         lifstyle: lifstyle,
         hostname: hostname,
         address: address,
         contact: contact,
+        keywords: keywords,
         uid: uid,
         likes: [],
         images: []
