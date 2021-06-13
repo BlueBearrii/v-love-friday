@@ -16,8 +16,25 @@ exports.registration = async (req, res) => {
     }
 }
 
+exports.isExistSetUserInformation = async (req, res) => {
+    const { email } = req.body;
+    let _isExist = false;
+
+    try {
+        const isExist = await firestore.collection("users").get();
+        const find = await isExist.forEach(value => {
+            if(value.data().email == email) _isExist = true;
+        })
+        console.log(_isExist);
+        res.json({ code: "auth/checker", message: _isExist });
+
+    } catch (error) {
+        res.json(error)
+    }
+}
+
 exports.setUserInformation = async (req, res) => {
-    const { email, uid, phone, firstname, lastname } = req.body;
+    const { email, uid, phone, firstname, lastname, lifestyles } = req.body;
 
     try {
         const user = await firestore.collection("users").doc(uid).set({
@@ -25,10 +42,11 @@ exports.setUserInformation = async (req, res) => {
             phone : phone,
             firstname : firstname,
             lastname : lastname,
-            uid : uid
+            uid : uid, 
+            lifestyles : lifestyles
         })
 
-        res.status(201).json(user)
+        res.status(201).json({ code: "auth/created", message: user })
     } catch (error) {
         res.status(400).json(error)
     }

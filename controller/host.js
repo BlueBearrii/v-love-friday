@@ -30,6 +30,71 @@ exports.createHost = async (req, res) => {
     }
 }
 
+exports.fetchHosting = async (req, res) => {
+    const { uid, type, lifstyle, keywords } = req.body;
+    let arr = []
+    let exist = [];
+
+    console.log(req.body)
+
+    try {
+        if (type == null && lifstyle.length == 0 && keywords.length == 0) {
+            const _fetchingHostAll = await firestore.collection("hosting").get()
+
+            const mapHostingAll = await _fetchingHostAll.docs.map(data => {
+                arr.push(data.data());
+            })
+
+        } else {
+            console.log("Do this!")
+            console.log(exist)
+            
+
+            if (type !== null) {
+                console.log("Do this!!")
+                const _fetchingHostType = await firestore.collection("hosting").where("type", "==", type).get()
+                const mapHostingType = await _fetchingHostType.docs.map(data => {
+                    if (exist.includes(data.id) == false) {
+                        arr.push(data.data());
+                        exist.push(data.id);
+                    }
+                })
+            }
+
+            if (lifstyle.length !== 0) {
+                console.log("Do this!!!")
+                const _fetchingHostLifestyle = await firestore.collection("hosting").where("lifstyle", "array-contains-any", lifstyle).get()
+                const mapHostingLifestyle = await _fetchingHostLifestyle.docs.map(data => {
+                    if (!exist.includes(data.id)) {
+                        arr.push(data.data());
+                        exist.push(data.id);
+                    }
+                })
+            }
+
+            if (keywords.length !== 0 ) {
+                console.log("Do this!!!!")
+                const _fetchingHostKeywords = await firestore.collection("hosting").where("keywords", "array-contains-any", keywords).get()
+                const mapHostingKeywords = await _fetchingHostKeywords.docs.map(data => {
+                    if (!exist.includes(data.id)) {
+                        arr.push(data.data());
+                        exist.push(data.id);
+
+                    }
+                })
+
+            }
+        }
+
+        console.log(arr)
+
+        res.status(200).json({ message: arr })
+
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
 exports.likeHost = async (req, res) => {
     const { id, uid } = req.body;
     const _collection = "hosting"
