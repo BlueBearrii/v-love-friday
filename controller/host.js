@@ -31,7 +31,7 @@ exports.createHost = async (req, res) => {
 }
 
 exports.fetchHosting = async (req, res) => {
-    const { uid, type, lifstyle, keywords } = req.body;
+    const { uid, type, lifstyle, keywords, balance } = req.body;
     let arr = []
     let exist = [];
 
@@ -42,19 +42,18 @@ exports.fetchHosting = async (req, res) => {
             const _fetchingHostAll = await firestore.collection("hosting").get()
 
             const mapHostingAll = await _fetchingHostAll.docs.map(data => {
-                arr.push(data.data());
+                if(balance >= data.data().price.value){
+                    arr.push(data.data());
+                }
+                
             })
 
         } else {
-            console.log("Do this!")
-            console.log(exist)
-            
 
             if (type !== null) {
-                console.log("Do this!!")
                 const _fetchingHostType = await firestore.collection("hosting").where("type", "==", type).get()
                 const mapHostingType = await _fetchingHostType.docs.map(data => {
-                    if (exist.includes(data.id) == false) {
+                    if (exist.includes(data.id) == false && balance >= data.data().price.value) {
                         arr.push(data.data());
                         exist.push(data.id);
                     }
@@ -62,10 +61,9 @@ exports.fetchHosting = async (req, res) => {
             }
 
             if (lifstyle.length !== 0) {
-                console.log("Do this!!!")
                 const _fetchingHostLifestyle = await firestore.collection("hosting").where("lifstyle", "array-contains-any", lifstyle).get()
                 const mapHostingLifestyle = await _fetchingHostLifestyle.docs.map(data => {
-                    if (!exist.includes(data.id)) {
+                    if (!exist.includes(data.id) && balance >= data.data().price.value) {
                         arr.push(data.data());
                         exist.push(data.id);
                     }
@@ -73,10 +71,9 @@ exports.fetchHosting = async (req, res) => {
             }
 
             if (keywords.length !== 0 ) {
-                console.log("Do this!!!!")
-                const _fetchingHostKeywords = await firestore.collection("hosting").where("keywords", "array-contains-any", keywords).get()
+                const _fetchingHostKeywords = await firestore.collection("hosting").where("keywords", "array-contains", keywords).get()
                 const mapHostingKeywords = await _fetchingHostKeywords.docs.map(data => {
-                    if (!exist.includes(data.id)) {
+                    if (!exist.includes(data.id) && balance >= data.data().price.value) {
                         arr.push(data.data());
                         exist.push(data.id);
 
@@ -85,8 +82,6 @@ exports.fetchHosting = async (req, res) => {
 
             }
         }
-
-        console.log(arr)
 
         res.status(200).json({ message: arr })
 
@@ -103,6 +98,30 @@ exports.likeHost = async (req, res) => {
         const like = await liked(_collection, id, uid);
 
         res.status(201).json({ code: "host/liked", message: like })
+
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
+
+exports.gotLikeHost = async (req, res) => {
+    const { id, uid } = req.body;
+    var resp;
+    try {
+
+        const _fetchingHostAll = await firestore.collection("hosting").where("hostid", "==", id).get()
+
+
+        const isCheck = await _fetchingHostAll.docs.map(data => {
+            if(data.id == id){
+                resp = data.data().likes.includes(uid);
+            }
+        })
+
+        console.log(resp)
+
+        res.status(201).json({ code: "host/liked", message: resp })
 
     } catch (error) {
         res.status(400).json(error)

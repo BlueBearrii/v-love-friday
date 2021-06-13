@@ -25,7 +25,6 @@ exports.isExistSetUserInformation = async (req, res) => {
         const find = await isExist.forEach(value => {
             if(value.data().email == email) _isExist = true;
         })
-        console.log(_isExist);
         res.json({ code: "auth/checker", message: _isExist });
 
     } catch (error) {

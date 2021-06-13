@@ -70,8 +70,6 @@ exports.fetchTrip = async (req, res) => {
       return arr;
     })
 
-    mapTrips;
-
     res.status(200).json({ message: arr })
   } catch (error) {
     res.status(400).json(error)
@@ -87,20 +85,39 @@ exports.fetchBooked = async (req, res) => {
     tripId: tripId,
   }
 
+  let arr = [];
+
   try {
-    const fetching = await firestore.collection("booking").where("uid", "==", uid).where("tripId", "==", tripId).get()
+    const fetching = await firestore.collection("booking").orderBy("bookingDate").get()
 
-    console.log(fetching.docs)
+    const mapBooked = await fetching.forEach(responseData => {
+      if(responseData.data().uid == uid && responseData.data().tripId == tripId) {
+        arr.push(responseData.data());
+      }
 
-    res.status(200).json({ code: "trip/fetch_booked", message: fetching.docs })
+      return arr;
+    })
+
+    res.status(200).json({ code: "trip/fetch_booked", message: arr })
   } catch (error) {
     res.status(400).json(error)
   }
 
 }
 
+exports.loadBalance = async (req, res) =>  {
+  const { uid, tripId } = req.body;
 
-exports.updateBalance = async (req, res) => {
+  try {
+    const ref = await firestore.collection("trips").doc(tripId).get();
+
+    res.json({message : ref.data()});
+  } catch (error) {
+    res.status(403).json(error)
+  }
+}
+
+exports.updateBalance = async (req, res, next) => {
   const { uid, tripId, pay } = req.body;
 
   try {
@@ -108,10 +125,38 @@ exports.updateBalance = async (req, res) => {
 
     const update = await ref.update({ balance: admin.firestore.FieldValue.increment(pay * (-1)) })
 
-    res.status(200).json({ code: "trip/balance_updated", message: update })
+    next();
   } catch (error) {
     res.status(403).json(error)
   }
+}
+
+exports.bookNow = async (req, res) => {
+  const { uid, tripId, hostId, coverUrl, hostName, pay, bookingDate } = req.body;
+  const initialCover ="https://firebasestorage.googleapis.com/v0/b/vr-love-friday.appspot.com/o/initial_cover%2FP6210478-2.jpg?alt=media&token=4cacd49e-302e-44a7-924a-a54bc97687f8"
+  
+  const booking = {
+    uid: uid,
+    tripId, tripId,
+    hostId, hostId,
+    hostName, hostName,
+    status: false,
+    bookingDate :  bookingDate,
+    pay: pay,
+    coverUrl: coverUrl,
+    createdAt: new Date().toISOString()
+  }
+
+  try {
+    const _createBooking = await firestore.collection("booking").add(booking)
+
+    const update = await _createBooking.update({ bookingId: _createBooking.id })
+
+    res.status(201).json({ code: "trip/created", status: true, message: update })
+  } catch (error) {
+    res.status(400).json(error)
+  }
+
 }
 
 

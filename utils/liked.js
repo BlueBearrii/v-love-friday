@@ -17,13 +17,13 @@ module.exports = async (collection, id, uid) => {
                     likes: admin.firestore.FieldValue.arrayRemove(uid)
                 })
 
-                resolve(_romoveLike);
+                resolve({status: "dislike", message:_romoveLike});
             } else {
                 const _updateLike = await ref.update({
                     likes: admin.firestore.FieldValue.arrayUnion(uid)
                 })
 
-                resolve(_updateLike);
+                resolve({status: "like", message:_updateLike});
             }
 
         } catch (error) {
