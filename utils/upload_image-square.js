@@ -8,7 +8,7 @@ module.exports = async (file, path, name) => {
   return new Promise(async (resolve, reject) => {
     const pathName = path + "/" + name
     const url = format(
-      `https://firebasestorage.googleapis.com/v0/b/${storage.name}/o/${path}%2F${name}?alt=media`);
+      `https://firebasestorage.googleapis.com/v0/b/${storage.name}/o/${path}${name}?alt=media`);
 
 
     const resizeBuffer = await sharp(file.buffer).resize(500,500).toBuffer()

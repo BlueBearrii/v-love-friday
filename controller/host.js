@@ -106,14 +106,18 @@ exports.fetchAllHosting = async (req, res) => {
 
         var getAll = await firestore.collection("hosting").get().then((value) => {
             value.docs.forEach(element => {
-                if (type == null && searchName == null || searchName == '') {
+                if (type == null && searchName == null) {
                     arr.push(element.data())
-                } else if (type == null && searchName != null) {
-                    if (element.data().hostName.includes(searchName)) {
+                } else if (type == null && searchName !== null) {
+                    if (element.data().hostName.includes(searchName) || element.data().address.province.includes(searchName) || element.data().address.city.includes(searchName)) {
                         arr.push(element.data())
                     }
-                } else if (type != null && searchName == null) {
+                } else if (type !== null && (searchName == null ||searchName == '')) {
                     if (element.data().type == type) {
+                        arr.push(element.data())
+                    }
+                } else if(type !== null && searchName !== null){
+                    if (element.data().type == type || element.data().hostName.includes(searchName) || element.data().address.province.includes(searchName) || element.data().address.city.includes(searchName)) {
                         arr.push(element.data())
                     }
                 }
@@ -172,7 +176,7 @@ exports.uploadPhotos = async (req, res) => {
     try {
 
         for (var index in files) {
-            const _upload = await upload_image_lanscape(files[index], path, files[index].originalname)
+            const _upload = await upload_image_lanscape(files[index], path, Math.floor(100000 + Math.random() * 900000).toString)
             console.log(_upload);
             arr.push(_upload.message);
 

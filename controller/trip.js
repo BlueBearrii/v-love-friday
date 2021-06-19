@@ -2,6 +2,7 @@ const express = require("express");
 const admin = require("firebase-admin");
 const like_click = require("../utils/like_dislike");
 const posting = require("../utils/posting");
+const upload_image_square = require("../utils/upload_image-square");
 
 const firestore = admin.firestore();
 
@@ -173,7 +174,7 @@ exports.bookNow = async (req, res) => {
 
         const update = await _createBooking.update({ bookingId: _createBooking.id })
 
-        res.status(201).json({ code: "booking/created", message: update })
+        res.status(201).json({ code: "booking/created", status: true,  message: update })
     } catch (error) {
         res.status(400).json(error)
     }
@@ -185,13 +186,26 @@ exports.post = async (req, res) => {
     const { uid, tripId, comments, username, user_image_path, createdAt } = req.body;
     const file = req.file;
 
+    console.log(file)
+
     try {
+        const upload_photo = await file == undefined ? null : await upload_image_square(file, "post/", `${Math.floor(100000 + Math.random() * 900000)}`)
 
-        const upload_photo = await upload_image_square(file, "user-profile", `${uid}`)
+        console.log(upload_photo);
 
-        const upload_post = await posting("trips", tripId, uid, user_image_path, username, comments, createdAt, upload_photo)
+        const post = await firestore.collection("posting").add({
+                uid: uid,
+                tripId: tripId,
+                commentor_profile: user_image_path,
+                commentor_name: username,
+                comment: comments,
+                photo_path: upload_photo.message,
+                createdAt: createdAt
+            }) 
 
-        res.status(201).json({ message: upload_post })
+        console.log(post);
+
+        res.status(201).json({ message: post })
 
     } catch (error) {
         res.status(400).json(error)
