@@ -1,5 +1,6 @@
 const express = require("express");
 const admin = require("firebase-admin");
+const { merge } = require("../routes/api/trip");
 const like_click = require("../utils/like_dislike");
 const posting = require("../utils/posting");
 const upload_image_square = require("../utils/upload_image-square");
@@ -49,6 +50,27 @@ exports.fetchTrips = async (req, res) => {
                 arr.push(responseData.data());
             }
 
+            return arr;
+        })
+
+        res.status(200).json({ message: arr })
+    } catch (error) {
+        res.status(400).json(error)
+    }
+
+}
+
+exports.fetchingComments = async (req, res) => {
+    const { tripId } = req.body;
+    let arr = [];
+
+    try {
+        const tripsCollection = await firestore.collection("posting").orderBy("createdAt", 'asc').get()
+
+        const posting = await tripsCollection.forEach(responseData => {
+            if(responseData.data().tripId == tripId){
+                arr.push(responseData.data());
+            }
             return arr;
         })
 
@@ -155,7 +177,7 @@ exports.updateBalance = async (req, res, next) => {
 }
 
 exports.bookNow = async (req, res) => {
-    const { uid, tripId, hostId, coverUrl, hostName, pay, bookingDate } = req.body;
+    const { uid, tripId, hostId, coverUrl, hostName, pay, bookingDate, phone} = req.body;
 
     const booking = {
         uid: uid,
@@ -165,6 +187,7 @@ exports.bookNow = async (req, res) => {
         status: false,
         bookingDate: bookingDate,
         pay: pay,
+        phone: phone,
         coverUrl: coverUrl,
         createdAt: new Date().toISOString()
     }
@@ -189,9 +212,13 @@ exports.post = async (req, res) => {
     console.log(file)
 
     try {
-        const upload_photo = await file == undefined ? null : await upload_image_square(file, "post/", `${Math.floor(100000 + Math.random() * 900000)}`)
+        
+        const upload_photo =  file == undefined ? {message: ''} : await upload_image_square(file, "post", Math.floor(100000 + Math.random() * 900000))
+
+
 
         console.log(upload_photo);
+        console.log(req.body);
 
         const post = await firestore.collection("posting").add({
                 uid: uid,
@@ -200,14 +227,16 @@ exports.post = async (req, res) => {
                 commentor_name: username,
                 comment: comments,
                 photo_path: upload_photo.message,
-                createdAt: createdAt
+                createdAt: createdAt,
+                likes:[]
             }) 
 
         console.log(post);
 
-        res.status(201).json({ message: post })
+        res.status(201).json({ code: "post/created", message: post })
 
     } catch (error) {
+        console.log(error);
         res.status(400).json(error)
     }
 }
@@ -220,6 +249,23 @@ exports.likeTrip = async (req, res) => {
         const like = await like_click("trips", tripId, uid);
 
         res.status(201).json({ message: like })
+
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
+exports.updateCover = async (req, res) => {
+    const { tripId, uid } = req.body;
+    const file = req.file;
+
+    try {
+
+        const  coverUrlNewPath = await await upload_image_square(file, "post", Math.floor(100000 + Math.random() * 900000))
+
+        const cover = await firestore.collection("trips").doc(tripId).set({"coverUrl": coverUrlNewPath.message}, {merge:true})
+
+        res.status(201).json({ code: "updated",message: cover })
 
     } catch (error) {
         res.status(400).json(error)

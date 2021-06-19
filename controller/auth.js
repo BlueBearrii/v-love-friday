@@ -34,7 +34,7 @@ exports.registration = async (req, res) => {
             phone: phone,
             displayName: displayName,
             user_image_path: user_image_path,
-            wallet: 0,
+            wallet: 10000,
         })
 
         res.status(201).json({code: "auth/created", message: user })
