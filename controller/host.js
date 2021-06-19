@@ -1,20 +1,25 @@
 const express = require("express");
 const admin = require("firebase-admin");
-const liked = require("../utils/liked");
+const liked = require("../utils/like_dislike");
+const upload_image_lanscape = require("../utils/upload_image-lanscape");
 
 const firestore = admin.firestore();
 
 exports.createHost = async (req, res) => {
-    const { lifstyle, hostname, address, contact, uid, keywords } = req.body;
+    const { hostName, address, contact, coverUrl, uid, order, type, description, conditions } = req.body;
     const host = {
-        lifstyle: lifstyle,
-        hostname: hostname,
+        hostName: hostName,
         address: address,
         contact: contact,
-        keywords: keywords,
+        coverUrl: coverUrl,
+        order: order,
         uid: uid,
+        type: type,
         likes: [],
-        images: []
+        images: [],
+        comments: [],
+        description: description,
+        conditions: conditions
     }
 
     try {
@@ -42,10 +47,10 @@ exports.fetchHosting = async (req, res) => {
             const _fetchingHostAll = await firestore.collection("hosting").get()
 
             const mapHostingAll = await _fetchingHostAll.docs.map(data => {
-                if(balance >= data.data().price.value){
+                if (balance >= data.data().price.value) {
                     arr.push(data.data());
                 }
-                
+
             })
 
         } else {
@@ -70,7 +75,7 @@ exports.fetchHosting = async (req, res) => {
                 })
             }
 
-            if (keywords.length !== 0 ) {
+            if (keywords.length !== 0) {
                 const _fetchingHostKeywords = await firestore.collection("hosting").where("keywords", "array-contains", keywords).get()
                 const mapHostingKeywords = await _fetchingHostKeywords.docs.map(data => {
                     if (!exist.includes(data.id) && balance >= data.data().price.value) {
@@ -90,12 +95,46 @@ exports.fetchHosting = async (req, res) => {
     }
 }
 
+exports.fetchAllHosting = async (req, res) => {
+    const { type, uid, searchName } = req.body;
+
+    console.log(req.body)
+
+    let arr = [];
+
+    try {
+
+        var getAll = await firestore.collection("hosting").get().then((value) => {
+            value.docs.forEach(element => {
+                if (type == null && searchName == null || searchName == '') {
+                    arr.push(element.data())
+                } else if (type == null && searchName != null) {
+                    if (element.data().hostName.includes(searchName)) {
+                        arr.push(element.data())
+                    }
+                } else if (type != null && searchName == null) {
+                    if (element.data().type == type) {
+                        arr.push(element.data())
+                    }
+                }
+            })
+        })
+
+        console.log(arr)
+
+        res.status(200).json({ message: arr.length == 0 ? null : arr })
+
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
 exports.likeHost = async (req, res) => {
-    const { id, uid } = req.body;
+    const { hostId, uid } = req.body;
     const _collection = "hosting"
     try {
 
-        const like = await liked(_collection, id, uid);
+        const like = await liked("hosting", hostId, uid);
 
         res.status(201).json({ code: "host/liked", message: like })
 
@@ -104,28 +143,51 @@ exports.likeHost = async (req, res) => {
     }
 }
 
+exports.uploadPhoto = async (req, res) => {
+    const { uid, name, path } = req.body;
+    const file = req.file;
 
-exports.gotLikeHost = async (req, res) => {
-    const { id, uid } = req.body;
-    var resp;
+    console.log(file)
+
     try {
 
-        const _fetchingHostAll = await firestore.collection("hosting").where("hostid", "==", id).get()
+        const upload = await upload_image_lanscape(file, path, Math.floor(100000 + Math.random() * 900000).toString)
 
+        console.log(upload.message);
 
-        const isCheck = await _fetchingHostAll.docs.map(data => {
-            if(data.id == id){
-                resp = data.data().likes.includes(uid);
-            }
-        })
-
-        console.log(resp)
-
-        res.status(201).json({ code: "host/liked", message: resp })
+        res.status(201).json(upload.message)
 
     } catch (error) {
         res.status(400).json(error)
     }
 }
+
+exports.uploadPhotos = async (req, res) => {
+    const { uid, path } = req.body;
+    const files = req.files;
+
+    console.log(files)
+    let arr = [];
+
+    try {
+
+        for (var index in files) {
+            const _upload = await upload_image_lanscape(files[index], path, files[index].originalname)
+            console.log(_upload);
+            arr.push(_upload.message);
+
+        }
+
+        //const upload =  await upload_image_lanscape(file, path, name)
+
+        console.log(arr);
+
+        res.status(201).json(arr)
+
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
 
 

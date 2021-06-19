@@ -11,7 +11,7 @@ module.exports = async (file, path, name) => {
       `https://firebasestorage.googleapis.com/v0/b/${storage.name}/o/${path}%2F${name}?alt=media`);
 
 
-    const resizeBuffer = await sharp(file.buffer).resize(800,600).toBuffer()
+    const resizeBuffer = await sharp(file.buffer).resize(1280,720).toBuffer()
 
     try {
       const _file = await storage.file(pathName);
@@ -36,5 +36,4 @@ module.exports = async (file, path, name) => {
       reject({ status: "error" });
     }
   })
-
 }

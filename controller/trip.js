@@ -1,190 +1,213 @@
 const express = require("express");
 const admin = require("firebase-admin");
-const liked = require("../utils/liked");
+const like_click = require("../utils/like_dislike");
+const posting = require("../utils/posting");
 
 const firestore = admin.firestore();
 
 exports.createTripRoom = async (req, res) => {
-  const { uid, tripName, budget, days, destination } = req.body;
-  const initialCover ="https://firebasestorage.googleapis.com/v0/b/vr-love-friday.appspot.com/o/initial_cover%2FP6210478-2.jpg?alt=media&token=4cacd49e-302e-44a7-924a-a54bc97687f8"
-  
-  const _trip = {
-    uid: uid,
-    tripName: tripName,
-    budget: budget,
-    balance: budget,
-    days: days,
-    destination: destination,
-    coverUrl: initialCover,
-    likes: [],
-    createdAt: new Date().toISOString()
-  }
+    const { uid, tripName, budget, days, destination, user_image_path } = req.body;
+    const initialCover = "https://firebasestorage.googleapis.com/v0/b/vr-love-friday.appspot.com/o/initial-cover-book%2Fdino-reichmuth-A5rCN8626Ck-unsplash-2.jpg?alt=media&token=3d6e9118-1aca-4286-9f29-9c8590823cff"
 
-  try {
-    const _createTripRoom = await firestore.collection("trips").add(_trip)
+    try {
+        const _createTripRoom = await firestore.collection("trips").add({
+            uid: uid,
+            tripName: tripName,
+            budget: budget,
+            balance: budget,
+            days: days,
+            destination: destination,
+            coverUrl: initialCover,
+            user_image_path: user_image_path,
+            posts: [],
+            likes: [],
+            comments: [],
+            createdAt: new Date().toISOString(),
+            public: false
+        })
 
-    const update = await _createTripRoom.update({ tripId: _createTripRoom.id })
+        const update = await _createTripRoom.update({ tripId: _createTripRoom.id })
 
-    res.status(201).json({ code: "trip/created", message: update })
-  } catch (error) {
-    res.status(400).json(error)
-  }
+        res.status(201).json({ code: "trip/created", message: update })
+    } catch (error) {
+        res.status(400).json(error)
+    }
 
 }
 
 exports.fetchTrips = async (req, res) => {
-  const { uid } = req.body;
-  let arr = [];
+    const { uid } = req.body;
+    let arr = [];
 
-  try {
-    const tripsCollection = await firestore.collection("trips").orderBy("createdAt", "desc").get()
+    try {
+        const tripsCollection = await firestore.collection("trips").orderBy("createdAt", "desc").get()
 
-    const mapTrips = await tripsCollection.forEach(responseData => {
+        const mapTrips = await tripsCollection.forEach(responseData => {
 
-      if (responseData.data().uid === uid) {
-        arr.push(responseData.data());
-      }
+            if (responseData.data().uid === uid) {
+                arr.push(responseData.data());
+            }
 
-      return arr;
-    })
+            return arr;
+        })
 
-    mapTrips;
-
-    res.status(200).json({ message: arr })
-  } catch (error) {
-    res.status(400).json(error)
-  }
+        res.status(200).json({ message: arr })
+    } catch (error) {
+        res.status(400).json(error)
+    }
 
 }
 
 exports.fetchTrip = async (req, res) => {
-  const { uid } = req.body;
-  let arr = [];
+    const { uid } = req.body;
+    let arr = [];
 
-  try {
-    const tripsCollection = await firestore.collection("trips").where("uid", "==", uid).get()
+    try {
+        const tripsCollection = await firestore.collection("trips").where("uid", "==", uid).get()
 
-    const mapTrips = await tripsCollection.forEach(responseData => {
-      arr.push(responseData.data());
+        const mapTrips = await tripsCollection.forEach(responseData => {
+            arr.push(responseData.data());
 
-      return arr;
-    })
+            return arr;
+        })
 
-    res.status(200).json({ message: arr })
-  } catch (error) {
-    res.status(400).json(error)
-  }
+        res.status(200).json({ message: arr })
+    } catch (error) {
+        res.status(400).json(error)
+    }
 
 }
+
+exports.fetchTripPublic = async (req, res) => {
+    const { uid } = req.body;
+    let arr = [];
+
+    try {
+        const tripsCollection = await firestore.collection("trips").where("public", "==", true).get()
+
+        const mapTrips = await tripsCollection.forEach(responseData => {
+            arr.push(responseData.data());
+
+            return arr;
+        })
+
+        res.status(200).json({ message: arr })
+    } catch (error) {
+        res.status(400).json(error)
+    }
+
+}
+
 
 
 exports.fetchBooked = async (req, res) => {
-  const { uid, tripId } = req.body;
-  const _trip = {
-    uid: uid,
-    tripId: tripId,
-  }
+    const { uid, tripId } = req.body;
+    const _trip = {
+        uid: uid,
+        tripId: tripId,
+    }
 
-  let arr = [];
+    let arr = [];
 
-  try {
-    const fetching = await firestore.collection("booking").orderBy("bookingDate").get()
+    try {
+        const fetching = await firestore.collection("booking").orderBy("bookingDate").get()
 
-    const mapBooked = await fetching.forEach(responseData => {
-      if(responseData.data().uid == uid && responseData.data().tripId == tripId) {
-        arr.push(responseData.data());
-      }
+        const mapBooked = await fetching.forEach(responseData => {
+            if (responseData.data().uid == uid && responseData.data().tripId == tripId) {
+                arr.push(responseData.data());
+            }
 
-      return arr;
-    })
+            return arr;
+        })
 
-    res.status(200).json({ code: "trip/fetch_booked", message: arr })
-  } catch (error) {
-    res.status(400).json(error)
-  }
+        res.status(200).json({ code: "trip/fetch_booked", message: arr })
+    } catch (error) {
+        res.status(400).json(error)
+    }
 
 }
 
-exports.loadBalance = async (req, res) =>  {
-  const { uid, tripId } = req.body;
+exports.loadBalance = async (req, res) => {
+    const { uid, tripId } = req.body;
 
-  try {
-    const ref = await firestore.collection("trips").doc(tripId).get();
+    try {
+        const ref = await firestore.collection("trips").doc(tripId).get();
 
-    res.json({message : ref.data()});
-  } catch (error) {
-    res.status(403).json(error)
-  }
+        res.json({ message: ref.data() });
+    } catch (error) {
+        res.status(403).json(error)
+    }
 }
 
 exports.updateBalance = async (req, res, next) => {
-  const { uid, tripId, pay } = req.body;
+    const { uid, tripId, pay } = req.body;
 
-  try {
-    const ref = await firestore.collection("trips").doc(tripId)
+    try {
+        const ref = await firestore.collection("trips").doc(tripId)
 
-    const update = await ref.update({ balance: admin.firestore.FieldValue.increment(pay * (-1)) })
+        const update = await ref.update({ balance: admin.firestore.FieldValue.increment(pay * (-1)) })
 
-    next();
-  } catch (error) {
-    res.status(403).json(error)
-  }
+        next();
+    } catch (error) {
+        res.status(403).json(error)
+    }
 }
 
 exports.bookNow = async (req, res) => {
-  const { uid, tripId, hostId, coverUrl, hostName, pay, bookingDate } = req.body;
-  const initialCover ="https://firebasestorage.googleapis.com/v0/b/vr-love-friday.appspot.com/o/initial_cover%2FP6210478-2.jpg?alt=media&token=4cacd49e-302e-44a7-924a-a54bc97687f8"
-  
-  const booking = {
-    uid: uid,
-    tripId, tripId,
-    hostId, hostId,
-    hostName, hostName,
-    status: false,
-    bookingDate :  bookingDate,
-    pay: pay,
-    coverUrl: coverUrl,
-    createdAt: new Date().toISOString()
-  }
+    const { uid, tripId, hostId, coverUrl, hostName, pay, bookingDate } = req.body;
 
-  try {
-    const _createBooking = await firestore.collection("booking").add(booking)
+    const booking = {
+        uid: uid,
+        tripId: tripId,
+        hostId: hostId,
+        hostName: hostName,
+        status: false,
+        bookingDate: bookingDate,
+        pay: pay,
+        coverUrl: coverUrl,
+        createdAt: new Date().toISOString()
+    }
 
-    const update = await _createBooking.update({ bookingId: _createBooking.id })
+    try {
+        const _createBooking = await firestore.collection("booking").add(booking)
 
-    res.status(201).json({ code: "trip/created", status: true, message: update })
-  } catch (error) {
-    res.status(400).json(error)
-  }
+        const update = await _createBooking.update({ bookingId: _createBooking.id })
+
+        res.status(201).json({ code: "booking/created", message: update })
+    } catch (error) {
+        res.status(400).json(error)
+    }
 
 }
 
 
-exports.commenting = async (req, res) => {
-  const { uid, tripId, comments, username, userImg } = req.body;
+exports.post = async (req, res) => {
+    const { uid, tripId, comments, username, user_image_path, createdAt } = req.body;
+    const file = req.file;
 
-  try {
-    const ref = await firestore.collection("comments");
+    try {
 
-    const set = await ref.add({ tripId: tripId, username: username, userImg: userImg, comments: comments })
+        const upload_photo = await upload_image_square(file, "user-profile", `${uid}`)
 
-    res.status(201).json({ code: "trip/comment", message: set })
-  } catch (error) {
-    res.status(403).json(error)
-  }
+        const upload_post = await posting("trips", tripId, uid, user_image_path, username, comments, createdAt, upload_photo)
+
+        res.status(201).json({ message: upload_post })
+
+    } catch (error) {
+        res.status(400).json(error)
+    }
 }
 
 
 exports.likeTrip = async (req, res) => {
-  const { tripId, uid } = req.body;
-  const _collection = "trips"
-  try {
+    const { tripId, uid } = req.body;
+    try {
 
-    const like = await liked(_collection, tripId, uid);
+        const like = await like_click("trips", tripId, uid);
 
-    res.status(201).json({ code: "trip/liked", message: like })
+        res.status(201).json({ message: like })
 
-  } catch (error) {
-    res.status(400).json(error)
-  }
+    } catch (error) {
+        res.status(400).json(error)
+    }
 }
