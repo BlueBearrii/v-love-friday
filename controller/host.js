@@ -155,7 +155,7 @@ exports.uploadPhoto = async (req, res) => {
 
     try {
 
-        const upload = await upload_image_lanscape(file, path, Math.floor(100000 + Math.random() * 900000).toString)
+        const upload = await upload_image_lanscape(file, path, `${Math.floor(100000 + Math.random() * 900000)}`)
 
         console.log(upload.message);
 
@@ -176,7 +176,7 @@ exports.uploadPhotos = async (req, res) => {
     try {
 
         for (var index in files) {
-            const _upload = await upload_image_lanscape(files[index], path, Math.floor(100000 + Math.random() * 900000).toString)
+            const _upload = await upload_image_lanscape(files[index], path, `${Math.floor(100000 + Math.random() * 900000)}`)
             console.log(_upload);
             arr.push(_upload.message);
 
