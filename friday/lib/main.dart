@@ -1,5 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:friday/screens/dashboard/dashboard.dart';
+import 'package:friday/screens/index.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +14,18 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        fontFamily: "Kanit",
+        primaryColor: Color.fromRGBO(177, 30, 94, 1),
+        accentColor: Color.fromRGBO(234, 0, 97, 1),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+              Color.fromRGBO(234, 0, 97, 1),
+            ),
+          ),
+        ),
+      ),
       initialRoute: '/',
       routes: {},
       home: FutureBuilder(
@@ -34,7 +48,7 @@ class App extends StatelessWidget {
             );
           }
 
-          return Container();
+          return Index();
         },
       ),
     );
