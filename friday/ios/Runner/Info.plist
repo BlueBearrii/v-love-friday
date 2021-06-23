@@ -101,10 +101,13 @@
 	</array>
 
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>describe why your app needs permission for the photo library. This is called Privacy - Photo Library Usage Description in the visual editor.</string>
+	<string>ขออนุญาตใช้คลังรูปภาพเพื่อการใช้รูปภาพจากมือถือ</string>
 
 	<key>NSCameraUsageDescription</key>
-	<string>describe why your app needs permission for the photo library. This is called Privacy - Photo Library Usage Description in the visual editor.</string>
+	<string>ขออนุญาตใช้กล้องเพื่อการบันทึกภาพภาพ</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Allow access to microphone</string>
 
 </dict>
 </plist>
