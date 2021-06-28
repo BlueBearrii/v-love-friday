@@ -223,7 +223,7 @@ exports.post = async (req, res) => {
         const post = await firestore.collection("posting").add({
                 uid: uid,
                 tripId: tripId,
-                commentor_profile: user_image_path,
+                commentor_profile: user_image_path || null,
                 commentor_name: username,
                 comment: comments,
                 photo_path: upload_photo.message,

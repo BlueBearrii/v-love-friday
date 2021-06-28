@@ -87,7 +87,6 @@ class TripRoute {
 
   static Future<String> creatingPost(
       uid, tripId, username, comments, file, userImage) async {
-    print("GGGGG");
     print(file);
 
     Dio dio = new Dio();
@@ -111,7 +110,7 @@ class TripRoute {
 
       return response.data["code"];
     } catch (e) {
-      //print(e);
+      print(e);
     }
   }
 
