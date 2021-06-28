@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "/Users/bluebearrii/Documents/developer/vr-love-friday/friday/build/google_sign_in/intermediates/res/merged/release/color/common_google_signin_btn_text_dark.xml",
+        "source": "/Users/bluebearrii/.gradle/caches/transforms-2/files-2.1/3ba5a2c0bf2ebb9c4a71418958b4c76c/jetified-play-services-base-16.0.1/res/color/common_google_signin_btn_text_dark.xml"
+    },
+    {
+        "merged": "/Users/bluebearrii/Documents/developer/vr-love-friday/friday/build/google_sign_in/intermediates/res/merged/release/color/common_google_signin_btn_text_light.xml",
+        "source": "/Users/bluebearrii/.gradle/caches/transforms-2/files-2.1/3ba5a2c0bf2ebb9c4a71418958b4c76c/jetified-play-services-base-16.0.1/res/color/common_google_signin_btn_text_light.xml"
+    },
+    {
+        "merged": "/Users/bluebearrii/Documents/developer/vr-love-friday/friday/build/google_sign_in/intermediates/res/merged/release/color/common_google_signin_btn_tint.xml",
+        "source": "/Users/bluebearrii/.gradle/caches/transforms-2/files-2.1/3ba5a2c0bf2ebb9c4a71418958b4c76c/jetified-play-services-base-16.0.1/res/color/common_google_signin_btn_tint.xml"
+    }
+]
