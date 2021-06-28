@@ -20,6 +20,7 @@ class _CommentPopUpState extends State<CommentPopUp> {
   String comments;
 
   var _user;
+  bool loading = false;
 
   File _image;
   String _image_path;
@@ -109,8 +110,14 @@ class _CommentPopUpState extends State<CommentPopUp> {
                           child: Row(
                             children: [
                               CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                    snapshot.data["user_image_path"]),
+                                backgroundColor: Theme.of(context).primaryColor,
+                                child: snapshot.data["user_image_path"] != null
+                                    ? Image.network(
+                                        snapshot.data["user_image_path"])
+                                    : Icon(
+                                        Icons.person,
+                                        color: Colors.white,
+                                      ),
                               ),
                               marginSpace(0, 5),
                               Text(snapshot.data["displayName"])
@@ -150,6 +157,9 @@ class _CommentPopUpState extends State<CommentPopUp> {
                                   const EdgeInsets.symmetric(horizontal: 15),
                               child: OutlinedButton(
                                   onPressed: () {
+                                    setState(() {
+                                      loading = !loading;
+                                    });
                                     TripRoute.creatingPost(
                                       user.uid,
                                       widget.data["tripId"],
@@ -161,13 +171,20 @@ class _CommentPopUpState extends State<CommentPopUp> {
                                       if (value == "post/created") {
                                         Navigator.pop(context, true);
                                       }
+
+                                      setState(() {
+                                        loading = !loading;
+                                      });
                                     });
                                   },
-                                  child: Text(
-                                    "Comment",
-                                    style: TextStyle(
-                                        color: Theme.of(context).primaryColor),
-                                  )),
+                                  child: loading
+                                      ? Text("Loaind ...")
+                                      : Text(
+                                          "Comment",
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .primaryColor),
+                                        )),
                             ))
                       ],
                     ),

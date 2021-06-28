@@ -90,15 +90,25 @@ class _DashboardState extends State<Dashboard> {
                 builder:
                     (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return CircularProgressIndicator();
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: Row(
+                        children: [Text("Loading ...")],
+                      ),
+                    );
                   }
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: Row(
                       children: [
                         CircleAvatar(
-                          child:
-                              Image.network(snapshot.data["user_image_path"]),
+                          backgroundColor: Theme.of(context).primaryColor,
+                          child: snapshot.data["user_image_path"] != null
+                              ? Image.network(snapshot.data["user_image_path"])
+                              : Icon(
+                                  Icons.person,
+                                  color: Colors.white,
+                                ),
                         ),
                         marginSpace(0, 4),
                         Text(snapshot.data["displayName"])

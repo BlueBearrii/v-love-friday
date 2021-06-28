@@ -89,9 +89,16 @@ class _FetchCommentsState extends State<FetchComments> {
                                 child: Row(
                                   children: [
                                     CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          doc[index]["commentor_profile"]),
-                                      radius: 16,
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      child: doc[index]["commentor_profile"] !=
+                                              null
+                                          ? Image.network(
+                                              doc[index]["commentor_profile"])
+                                          : Icon(
+                                              Icons.person,
+                                              color: Colors.white,
+                                            ),
                                     ),
                                     Container(
                                       margin:
