@@ -19,8 +19,37 @@ class _LoginState extends State<Login> {
   String email;
   String password;
   bool _obscureText = true;
+  String resp =
+      "[firebase_auth/account-exists-with-different-credential] An account already exists with the same email address but different sign-in credentials. Sign in using a provider associated with this email address.";
 
   final _formKey = GlobalKey<FormState>();
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('แจ้งเตือน'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const <Widget>[
+                Text('อีเมล์นี้ถูกใช้ในการสมัครแล้ว'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('ปิด'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -212,27 +241,35 @@ class _LoginState extends State<Login> {
                                   CustomLoading.loadingNormal(context);
                                   FirebaseAuthClass.signInWithFacebook()
                                       .then((value) async {
-                                    print(value);
-                                    Map data = {
-                                      "displayName": value.user.displayName,
-                                      "email": value.user.email,
-                                      "phone": value.user.phoneNumber,
-                                      "user_image_path": value
-                                          .additionalUserInfo
-                                          .profile["picture"]["data"]["url"],
-                                      "file": null
-                                    };
+                                    print(value == resp ? true : false);
+                                    if (value != resp) {
+                                      Map data = {
+                                        "displayName": value.user.displayName,
+                                        "email": value.user.email,
+                                        "phone": value.user.phoneNumber,
+                                        "user_image_path": value
+                                            .additionalUserInfo
+                                            .profile["picture"]["data"]["url"],
+                                        "file": null
+                                      };
 
-                                    await AuthRoute.registration(
-                                            data, value.user.uid)
-                                        .then((value) {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  Index()),
-                                          (route) => false);
-                                    });
+                                      await AuthRoute.registration(
+                                              data, value.user.uid)
+                                          .then((value) {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        Index()),
+                                            (route) => false);
+                                      });
+                                    } else {
+                                      Navigator.pop(context);
+                                      _showMyDialog();
+                                    }
+                                  }).catchError((onError) {
+                                    Navigator.pop(context);
                                   });
                                 },
                                 child: Row(
@@ -270,26 +307,34 @@ class _LoginState extends State<Login> {
                                   CustomLoading.loadingNormal(context);
                                   await FirebaseAuthClass.signInWithGoogle()
                                       .then((value) async {
-                                    Map data = {
-                                      "displayName": value.user.displayName,
-                                      "email": value.user.email,
-                                      "phone": value.user.phoneNumber,
-                                      "user_image_path": value
-                                          .additionalUserInfo
-                                          .profile["picture"],
-                                      "file": null
-                                    };
+                                    if (value != resp) {
+                                      Map data = {
+                                        "displayName": value.user.displayName,
+                                        "email": value.user.email,
+                                        "phone": value.user.phoneNumber,
+                                        "user_image_path": value
+                                            .additionalUserInfo
+                                            .profile["picture"],
+                                        "file": null
+                                      };
 
-                                    await AuthRoute.registration(
-                                            data, value.user.uid)
-                                        .then((value) {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  Index()),
-                                          (route) => false);
-                                    });
+                                      await AuthRoute.registration(
+                                              data, value.user.uid)
+                                          .then((value) {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        Index()),
+                                            (route) => false);
+                                      });
+                                    } else {
+                                      Navigator.pop(context);
+                                      _showMyDialog();
+                                    }
+                                  }).catchError((onError) {
+                                    Navigator.pop(context);
                                   });
                                 },
                                 child: Row(

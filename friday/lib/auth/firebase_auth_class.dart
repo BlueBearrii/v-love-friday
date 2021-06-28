@@ -32,19 +32,25 @@ class FirebaseAuthClass {
     return userCredential;
   }
 
-  static Future<UserCredential> signInWithFacebook() async {
-    // Trigger the sign-in flow
-    final LoginResult result = await FacebookAuth.instance.login();
+  static Future<dynamic> signInWithFacebook() async {
+    try {
+      // Trigger the sign-in flow
+      final LoginResult result = await FacebookAuth.instance.login();
 
-    // Create a credential from the access token
+      // Create a credential from the access token
 
-    if (result.status == LoginStatus.success) {
-      final facebookAuthCredential =
-          FacebookAuthProvider.credential(result.accessToken.token);
+      if (result.status == LoginStatus.success) {
+        final facebookAuthCredential =
+            FacebookAuthProvider.credential(result.accessToken.token);
 
-      // Once signed in, return the UserCredential
-      return await FirebaseAuth.instance
-          .signInWithCredential(facebookAuthCredential);
+        // Once signed in, return the UserCredential
+
+        return await FirebaseAuth.instance
+            .signInWithCredential(facebookAuthCredential);
+      }
+    } catch (e) {
+      print(e.toString());
+      return e.toString();
     }
   }
 
