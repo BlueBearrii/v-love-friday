@@ -45,11 +45,10 @@ class _RecTripState extends State<RecTrip> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Booking",
+                            "การจอง",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w700),
                           ),
-                          Text("List of all your booking"),
                         ],
                       ),
                     ),
@@ -67,7 +66,7 @@ class _RecTripState extends State<RecTrip> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Post",
+                            "บันทึกความทรงจำ",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w700),
                           ),

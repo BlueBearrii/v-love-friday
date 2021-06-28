@@ -73,13 +73,7 @@ class _ReccomendState extends State<Reccomend> {
             }
             return AspectRatio(
               aspectRatio: 16 / 9,
-              child: Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 10,
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      Theme.of(context).primaryColor),
-                ),
-              ),
+              child: Center(child: Text("Loading ...")),
             );
           },
         ),
