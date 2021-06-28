@@ -317,8 +317,13 @@ class _RegisterState extends State<Register> {
                                       FirebaseAuthClass
                                               .signUpWithEmailAndPassword(data)
                                           .then((value) {
-                                        Navigator.popUntil(
-                                            context, ModalRoute.withName('/'));
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        Index()),
+                                            (route) => false);
                                       });
                                     }
                                   },
