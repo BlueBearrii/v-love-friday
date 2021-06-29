@@ -243,10 +243,10 @@ exports.post = async (req, res) => {
 
 
 exports.likeTrip = async (req, res) => {
-    const { tripId, uid } = req.body;
+    const { collection, tripId, uid } = req.body;
     try {
 
-        const like = await like_click("trips", tripId, uid);
+        const like = await like_click(collection, tripId, uid);
 
         res.status(201).json({ message: like })
 
