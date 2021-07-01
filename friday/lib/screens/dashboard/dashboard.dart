@@ -125,27 +125,29 @@ class _DashboardState extends State<Dashboard> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) => Hosting(),
+                      onPressed: null, //() {
+                      //   Navigator.of(context).push(
+                      //     MaterialPageRoute(
+                      //       builder: (ctx) => Hosting(),
+                      //     ),
+                      //   );
+                      // },
+                      child: Row(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.building,
+                            color: Colors.grey,
+                          ),
+                          marginSpace(0, 5),
+                          Text(
+                            "Hosting (soon)",
+                            style: TextStyle(
+                              color: Colors.grey,
                             ),
-                          );
-                        },
-                        child: Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.building,
-                              color: Theme.of(context).accentColor,
-                            ),
-                            marginSpace(0, 5),
-                            Text(
-                              "Hosting",
-                              style: TextStyle(
-                                  color: Theme.of(context).accentColor),
-                            ),
-                          ],
-                        )),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -157,21 +159,21 @@ class _DashboardState extends State<Dashboard> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: TextButton(
-                        onPressed: () {},
-                        child: Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.wrench,
-                              color: Theme.of(context).accentColor,
-                            ),
-                            marginSpace(0, 5),
-                            Text(
-                              "Settingt",
-                              style: TextStyle(
-                                  color: Theme.of(context).accentColor),
-                            ),
-                          ],
-                        )),
+                      onPressed: null,
+                      child: Row(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.wrench,
+                            color: Colors.grey,
+                          ),
+                          marginSpace(0, 5),
+                          Text(
+                            "Setting (soon)",
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -183,30 +185,31 @@ class _DashboardState extends State<Dashboard> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 15),
                     child: TextButton(
-                        onPressed: () {
-                          FirebaseAuthClass.signOut().then((value) {
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (BuildContext context) => Index()),
-                                (route) => false);
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            FaIcon(
-                              FontAwesomeIcons.signOutAlt,
+                      onPressed: () {
+                        FirebaseAuthClass.signOut().then((value) {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext context) => Index()),
+                              (route) => false);
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          FaIcon(
+                            FontAwesomeIcons.signOutAlt,
+                            color: Theme.of(context).accentColor,
+                          ),
+                          marginSpace(0, 5),
+                          Text(
+                            "Sign out",
+                            style: TextStyle(
                               color: Theme.of(context).accentColor,
                             ),
-                            marginSpace(0, 5),
-                            Text(
-                              "Sign out",
-                              style: TextStyle(
-                                color: Theme.of(context).accentColor,
-                              ),
-                            ),
-                          ],
-                        )),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               ),
