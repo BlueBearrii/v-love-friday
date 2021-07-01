@@ -17,7 +17,7 @@
 | :---: |
 |APK build <br><br> ![Download](./assets/FRIDAY.png)</td>|
 
-### การทดลองใช้งาน
+<h3>🔥 การทดลองใช้งาน</h3>
 
     git clone https://github.com/BlueBearrii/vr-love-friday.git
   
