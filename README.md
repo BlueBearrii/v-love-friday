@@ -43,7 +43,6 @@
     
 <h3>🔥 API</h3>
 
-Deploying : https://vr-love-friday.herokuapp.com/api
 
 | Feature | Method  | Route | Parameters | Description |
 | --- | :---: | --- | --- | --- |
